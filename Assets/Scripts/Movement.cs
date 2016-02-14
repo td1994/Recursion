@@ -6,6 +6,12 @@ public class Movement : MonoBehaviour {
     public float speed;
     public float jump;
     private bool grounded = true;
+    private bool dead = false;
+    public GameObject background;
+    public TextMesh status;
+    public GameObject retry;
+    public GameObject mainMenu;
+
     // Use this for initialization
     void Start () {
         this.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, 0);
@@ -18,6 +24,12 @@ public class Movement : MonoBehaviour {
             this.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, jump);
             grounded = false;
         }
+
+        if(this.GetComponent<Rigidbody2D>().velocity.x == 0)
+        {
+            dead = true;
+            Destroy(this.gameObject);
+        }
 	}
 
     void OnCollisionEnter2D(Collision2D coll)
@@ -26,10 +38,17 @@ public class Movement : MonoBehaviour {
         {
             grounded = true;
         }
-        else if (coll.gameObject.tag == "teleporter")
+    }
+
+    void OnDestroy()
+    {
+        if(dead)
         {
-            this.transform.position = new Vector3(1f, this.transform.position.y, this.transform.position.z);
-            this.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, 0);
+            background.GetComponent<SpriteRenderer>().enabled = true;
+            status.text = "Level Failed!";
+            status.GetComponent<MeshRenderer>().enabled = true;
+            retry.SetActive(true);
+            mainMenu.SetActive(true);
         }
     }
 }

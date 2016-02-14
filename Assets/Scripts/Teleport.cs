@@ -4,13 +4,17 @@ using System.Collections;
 public class Teleport : MonoBehaviour {
 
     public GameObject target;
+    public int recursionCount = 1;
 
-    void onCollisionStay2D(Collision coll)
+    void OnTriggerEnter2D(Collider2D coll)
     {
-        print("It Works!");
-        if(coll.gameObject.tag == "teleporter")
+        print(recursionCount);
+        if (coll.gameObject.tag == "Player")
         {
-            this.transform.position = target.transform.position;
+            recursionCount++;
+            coll.transform.position = new Vector3(1f, coll.transform.position.y, 
+                coll.transform.position.z);
         }
+        
     }
 }

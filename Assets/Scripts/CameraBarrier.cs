@@ -9,45 +9,48 @@ public class CameraBarrier : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        float posX = this.transform.position.x, posY = this.transform.position.y;
-        if((rightWall && lastCollidedX != 0 && player.transform.position.x < lastCollidedX)
-            || (!rightWall && lastCollidedX != 0 && player.transform.position.x > lastCollidedX))
+        if (GameObject.Find("Character") != null)
         {
-            print("Moving away from wall");
-            lastCollidedX = 0;
-        }
-        if ((ceil && lastCollidedY != 0 && player.transform.position.y < lastCollidedY - (1.5f * this.GetComponent<BoxCollider2D>().size.y / 4))
-            || (!ceil && lastCollidedY != 0 && player.transform.position.y > lastCollidedY + (1.5f * this.GetComponent<BoxCollider2D>().size.y / 4)))
-        {
-            print("Moving away from ceiling");
-            lastCollidedY = 0;
-        }
-
-        if (lastCollidedX == 0)
-        {
-            posX = player.transform.position.x;
-        }
-        else
-        {
-            posX = lastCollidedX;
-        }
-        if(lastCollidedY == 0)
-        {
-            if (ceil)
+            float posX = this.transform.position.x, posY = this.transform.position.y;
+            if ((rightWall && lastCollidedX != 0 && player.transform.position.x < lastCollidedX)
+                || (!rightWall && lastCollidedX != 0 && player.transform.position.x > lastCollidedX))
             {
-                posY = player.transform.position.y - 1.5f * this.GetComponent<BoxCollider2D>().size.y / 4;
+                print("Moving away from wall");
+                lastCollidedX = 0;
+            }
+            if ((ceil && lastCollidedY != 0 && player.transform.position.y < lastCollidedY - (1.5f * this.GetComponent<BoxCollider2D>().size.y / 4))
+                || (!ceil && lastCollidedY != 0 && player.transform.position.y > lastCollidedY + (1.5f * this.GetComponent<BoxCollider2D>().size.y / 4)))
+            {
+                print("Moving away from ceiling");
+                lastCollidedY = 0;
+            }
+
+            if (lastCollidedX == 0)
+            {
+                posX = player.transform.position.x;
             }
             else
             {
-                posY = player.transform.position.y + 1.5f * this.GetComponent<BoxCollider2D>().size.y / 4;
+                posX = lastCollidedX;
             }
-        }
-        else
-        {
-            posY = lastCollidedY;
-        }
+            if (lastCollidedY == 0)
+            {
+                if (ceil)
+                {
+                    posY = player.transform.position.y - 1.5f * this.GetComponent<BoxCollider2D>().size.y / 4;
+                }
+                else
+                {
+                    posY = player.transform.position.y + 1.5f * this.GetComponent<BoxCollider2D>().size.y / 4;
+                }
+            }
+            else
+            {
+                posY = lastCollidedY;
+            }
 
-        this.transform.position = new Vector3(posX, posY, this.transform.position.z);
+            this.transform.position = new Vector3(posX, posY, this.transform.position.z);
+        }
 	}
 
     void OnCollisionEnter2D(Collision2D coll)
