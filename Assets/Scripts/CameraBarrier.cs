@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System;
 
 public class CameraBarrier : MonoBehaviour {
 
@@ -15,17 +15,17 @@ public class CameraBarrier : MonoBehaviour {
             if ((rightWall && lastCollidedX != 0 && player.transform.position.x < lastCollidedX)
                 || (!rightWall && lastCollidedX != 0 && player.transform.position.x > lastCollidedX))
             {
-                print("Moving away from wall");
-                lastCollidedX = 0;
+                //print("Moving away from wall");
+                lastCollidedX = Int32.MinValue;
             }
             if ((ceil && lastCollidedY != 0 && player.transform.position.y < lastCollidedY - (1.5f * this.GetComponent<BoxCollider2D>().size.y / 4))
                 || (!ceil && lastCollidedY != 0 && player.transform.position.y > lastCollidedY + (1.5f * this.GetComponent<BoxCollider2D>().size.y / 4)))
             {
                 print("Moving away from ceiling");
-                lastCollidedY = 0;
+                lastCollidedY = Int32.MinValue;
             }
 
-            if (lastCollidedX == 0)
+            if (lastCollidedX == Int32.MinValue)
             {
                 posX = player.transform.position.x;
             }
@@ -33,15 +33,17 @@ public class CameraBarrier : MonoBehaviour {
             {
                 posX = lastCollidedX;
             }
-            if (lastCollidedY == 0)
+            if (lastCollidedY == Int32.MinValue
+                || lastCollidedY < player.transform.position.y - 1.5f * this.GetComponent<BoxCollider2D>().size.y / 4
+                || lastCollidedY > player.transform.position.y + 1.5f * this.GetComponent<BoxCollider2D>().size.y / 4)
             {
                 if (ceil)
                 {
-                    posY = player.transform.position.y - 1.5f * this.GetComponent<BoxCollider2D>().size.y / 4;
+                    posY = player.transform.position.y + 1.5f * this.GetComponent<BoxCollider2D>().size.y / 4;
                 }
                 else
                 {
-                    posY = player.transform.position.y + 1.5f * this.GetComponent<BoxCollider2D>().size.y / 4;
+                    posY = player.transform.position.y - 1.5f * this.GetComponent<BoxCollider2D>().size.y / 4;
                 }
             }
             else
@@ -58,21 +60,21 @@ public class CameraBarrier : MonoBehaviour {
         if (coll.gameObject.tag == "border")
         {
             //hits barrier to the right
-            if (coll.transform.position.x > 0)
+            if (coll.gameObject.name.Contains("Right Border"))
             {
                 print("it hit right wall");
                 rightWall = true;
                 lastCollidedX = this.transform.position.x;
             }
             //hits barrier to the left
-            else
+            else if (coll.gameObject.name.Contains("Left Border"))
             {
                 print("it hit left wall");
                 rightWall = false;
                 lastCollidedX = this.transform.position.x + this.GetComponent<BoxCollider2D>().size.x / 2;
             }
             //hits barrier to the top
-            if(coll.transform.position.y > 0)
+            if(coll.gameObject.name.Contains("Top Border"))
             {
                 print("it hit ceiling");
                 ceil = true;
