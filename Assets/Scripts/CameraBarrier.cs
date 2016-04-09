@@ -6,6 +6,7 @@ public class CameraBarrier : MonoBehaviour {
     private bool rightWall, ceil;
     private float lastCollidedX, lastCollidedY;
     public GameObject player;
+    public GameObject border;
 
 	// Update is called once per frame
 	void Update () {
@@ -15,11 +16,11 @@ public class CameraBarrier : MonoBehaviour {
             if ((rightWall && lastCollidedX != 0 && player.transform.position.x < lastCollidedX)
                 || (!rightWall && lastCollidedX != 0 && player.transform.position.x > lastCollidedX))
             {
-                //print("Moving away from wall");
+                print("Moving away from wall");
                 lastCollidedX = Int32.MinValue;
             }
-            if ((ceil && lastCollidedY != 0 && player.transform.position.y < lastCollidedY - (1.5f * this.GetComponent<BoxCollider2D>().size.y / 4))
-                || (!ceil && lastCollidedY != 0 && player.transform.position.y > lastCollidedY + (1.5f * this.GetComponent<BoxCollider2D>().size.y / 4)))
+            if ((ceil && lastCollidedY != Int32.MinValue && player.transform.position.y < lastCollidedY - (border.transform.position.y + border.GetComponent<BoxCollider2D>().size.y / 2))
+                || (!ceil && lastCollidedY != Int32.MinValue && player.transform.position.y > lastCollidedY + (border.transform.position.y + border.GetComponent<BoxCollider2D>().size.y / 2)))
             {
                 print("Moving away from ceiling");
                 lastCollidedY = Int32.MinValue;
@@ -39,11 +40,13 @@ public class CameraBarrier : MonoBehaviour {
             {
                 if (ceil)
                 {
-                    posY = player.transform.position.y + 1.5f * this.GetComponent<BoxCollider2D>().size.y / 4;
+                    print("Moving Up");
+                    posY = player.transform.position.y + border.GetComponent<BoxCollider2D>().size.y / 2;
                 }
                 else
                 {
-                    posY = player.transform.position.y - 1.5f * this.GetComponent<BoxCollider2D>().size.y / 4;
+                    print("Moving Down");
+                    posY = player.transform.position.y - border.GetComponent<BoxCollider2D>().size.y / 2;
                 }
             }
             else

@@ -1,20 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class ResultMenuControls : MonoBehaviour {
+    public string currentLevel;
+    public string nextLevel;
+    public string mainMenu;
 
 	public void Retry()
     {
-        Application.LoadLevel("TestLevel");
+        SceneManager.LoadScene(currentLevel);
     }
 
     public void ReturnToMenu()
     {
-        Application.LoadLevel("TestLevel");
+        SceneManager.LoadScene(nextLevel);
     }
 
     public void NextLevel()
     {
-        Application.LoadLevel("TestLevel");
+        SceneManager.LoadScene(mainMenu);
     }
 }
