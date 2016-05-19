@@ -6,6 +6,8 @@ public class Teleport : MonoBehaviour {
     public GameObject target;
     public int recursionCount = 1;
     public int xPos = 0;
+    public int toSection;
+    public bool beginning;
 
     void OnTriggerEnter2D(Collider2D coll)
     {
@@ -16,11 +18,14 @@ public class Teleport : MonoBehaviour {
             {
                 coll.transform.position = new Vector3(target.transform.position.x, target.transform.position.y,
                     coll.transform.position.z);
+                coll.GetComponent<Movement>().atSection = toSection;
+                coll.GetComponent<Movement>().beginning = beginning;
             } else
             {
                 recursionCount++;
                 coll.transform.position = new Vector3(xPos, coll.transform.position.y,
                     coll.transform.position.z);
+                coll.GetComponent<Movement>().beginning = true;
             }
         }
         

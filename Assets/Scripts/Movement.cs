@@ -11,6 +11,8 @@ public class Movement : MonoBehaviour {
     public TextMesh status;
     public GameObject retry;
     public GameObject mainMenu;
+    public int atSection = 1;
+    public bool beginning = true;
 
     // Use this for initialization
     void Start () {

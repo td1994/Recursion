@@ -4,59 +4,82 @@ using System;
 public class CameraBarrier : MonoBehaviour {
 
     private bool rightWall, ceil;
+    private bool collidedX = true,  collidedY = true;
     private float lastCollidedX, lastCollidedY;
+    private float initDistX = 19.2f;
+    private float initDistY = 8.1f;
     public GameObject player;
     public GameObject border;
+    private float lastX = 0f;
+    private bool teleported;
+
 
 	// Update is called once per frame
 	void Update () {
         if (GameObject.Find("Character") != null)
         {
             float posX = this.transform.position.x, posY = this.transform.position.y;
-            if ((rightWall && lastCollidedX != 0 && player.transform.position.x < lastCollidedX)
-                || (!rightWall && lastCollidedX != 0 && player.transform.position.x > lastCollidedX))
-            {
-                print("Moving away from wall");
-                lastCollidedX = Int32.MinValue;
-            }
-            if ((ceil && lastCollidedY != Int32.MinValue && player.transform.position.y < lastCollidedY - (border.transform.position.y + border.GetComponent<BoxCollider2D>().size.y / 2))
-                || (!ceil && lastCollidedY != Int32.MinValue && player.transform.position.y > lastCollidedY + (border.transform.position.y + border.GetComponent<BoxCollider2D>().size.y / 2)))
-            {
-                print("Moving away from ceiling");
-                lastCollidedY = Int32.MinValue;
-            }
 
-            if (lastCollidedX == Int32.MinValue)
+            //Control the camera on the X axis
+            if (collidedX)
+            {
+                if (!rightWall && player.transform.position.x > this.transform.position.x)
+                {
+                    print("Moving away from left wall");
+                    posX = player.transform.position.x;
+                    collidedX = false;
+                } else if (rightWall && player.transform.position.x < lastCollidedX)
+                {
+                    print("Moving away from right wall");
+                    posX = player.transform.position.x;
+                    collidedX = false;
+                    rightWall = false;
+                    if (Math.Abs(posX - lastX) > 20f)
+                    {
+                        print("teleported");
+                        teleported = true;
+                        posX = player.transform.position.x + initDistX - player.GetComponent<Renderer>().bounds.size.x / 2;
+                        collidedX = true;
+                    }
+                }           
+            } else
             {
                 posX = player.transform.position.x;
-            }
-            else
-            {
-                posX = lastCollidedX;
-            }
-            if (lastCollidedY == Int32.MinValue
-                || lastCollidedY < player.transform.position.y - 1.5f * this.GetComponent<BoxCollider2D>().size.y / 4
-                || lastCollidedY > player.transform.position.y + 1.5f * this.GetComponent<BoxCollider2D>().size.y / 4)
-            {
-                if (ceil)
+                if (Math.Abs(posX - lastX) > 20f)
                 {
-                    print("Moving Up");
-                    posY = player.transform.position.y + border.GetComponent<BoxCollider2D>().size.y / 2;
+                    print("teleported");
+                    teleported = true;
+                    collidedX = true;
+                    if (player.GetComponent<Movement>().beginning)
+                    {
+                        posX = player.transform.position.x + initDistX - player.GetComponent<Renderer>().bounds.size.x / 2;     
+                    } else
+                    {
+                        posX = player.transform.position.x;
+                    }
                 }
-                else
-                {
-                    print("Moving Down");
-                    posY = player.transform.position.y - border.GetComponent<BoxCollider2D>().size.y / 2;
-                }
-            }
-            else
-            {
-                posY = lastCollidedY;
             }
 
+            //Controls the camera on the Y axis
+            if (ceil && player.transform.position.y < lastCollidedY - (border.GetComponent<Renderer>().bounds.size.y / 2) + (player.GetComponent<Renderer>().bounds.size.x / 2))
+            {
+                print("Moving away from ceiling");
+                posY = player.transform.position.y + border.GetComponent<Renderer>().bounds.size.y / 2 - (player.GetComponent<Renderer>().bounds.size.x / 2);
+            } else if(!ceil && player.transform.position.y > lastCollidedY + (border.GetComponent<Renderer>().bounds.size.y / 2) - (player.GetComponent<Renderer>().bounds.size.x / 2))
+            {
+                print("Moving away from floor");
+                posY = player.transform.position.y - (border.GetComponent<Renderer>().bounds.size.y / 2) + (player.GetComponent<Renderer>().bounds.size.x / 2);
+            }
+            else if (teleported)
+            {
+                print("changing y value");
+                posY = player.transform.position.y + (border.GetComponent<Renderer>().bounds.size.y / 2) - (player.GetComponent<Renderer>().bounds.size.x / 2);
+                teleported = false;
+            }
             this.transform.position = new Vector3(posX, posY, this.transform.position.z);
+            lastX = posX;
         }
-	}
+    }
 
     void OnCollisionEnter2D(Collision2D coll)
     {
@@ -67,6 +90,7 @@ public class CameraBarrier : MonoBehaviour {
             {
                 print("it hit right wall");
                 rightWall = true;
+                collidedX = true;
                 lastCollidedX = this.transform.position.x;
             }
             //hits barrier to the left
@@ -74,6 +98,7 @@ public class CameraBarrier : MonoBehaviour {
             {
                 print("it hit left wall");
                 rightWall = false;
+                collidedX = true;
                 lastCollidedX = this.transform.position.x + this.GetComponent<BoxCollider2D>().size.x / 2;
             }
             //hits barrier to the top
@@ -81,6 +106,7 @@ public class CameraBarrier : MonoBehaviour {
             {
                 print("it hit ceiling");
                 ceil = true;
+                collidedY = true;
                 lastCollidedY = this.transform.position.y;
             }
             //hits barrier to the bottom
@@ -88,6 +114,7 @@ public class CameraBarrier : MonoBehaviour {
             {
                 print("it hit floor");
                 ceil = false;
+                collidedY = true;
                 lastCollidedY = this.transform.position.y;
             }
         }
