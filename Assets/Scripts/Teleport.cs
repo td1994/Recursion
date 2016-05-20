@@ -11,7 +11,7 @@ public class Teleport : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D coll)
     {
-        print(recursionCount);
+        //print(recursionCount);
         if (coll.gameObject.tag == "Player")
         {
             if(target != null)
