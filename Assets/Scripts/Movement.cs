@@ -7,15 +7,19 @@ public class Movement : MonoBehaviour {
     public float jump;
     private bool grounded = true;
     private bool dead = false;
-    public GameObject background;
-    public TextMesh status;
-    public GameObject retry;
-    public GameObject mainMenu;
+    private GameObject background;
+    private TextMesh status;
+    private GameObject retry;
+    private GameObject mainMenu;
     public int atSection = 1;
     public bool beginning = true;
 
     // Use this for initialization
     void Start () {
+        background = GameObject.Find("Background");
+        status = GameObject.Find("Level Complete").GetComponent<TextMesh>();
+        retry = GameObject.Find("Retry");
+        mainMenu = GameObject.Find("Main Menu");
         this.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, 0);
 	}
 	

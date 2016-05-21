@@ -4,7 +4,12 @@ using System;
 
 public class Button : MonoBehaviour {
     public bool triggered = false;
-    public GameObject character;
+    private GameObject character;
+
+    void Start ()
+    {
+        character = GameObject.Find("Character");
+    }
 
     // Update is called once per frame
     void Update()
