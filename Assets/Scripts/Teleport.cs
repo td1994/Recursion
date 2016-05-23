@@ -18,14 +18,14 @@ public class Teleport : MonoBehaviour {
             {
                 coll.transform.position = new Vector3(target.transform.position.x, target.transform.position.y,
                     coll.transform.position.z);
-                coll.GetComponent<Movement>().atSection = toSection;
-                coll.GetComponent<Movement>().beginning = beginning;
+                coll.GetComponent<GameManager>().atSection = toSection;
+                coll.GetComponent<GameManager>().beginning = beginning;
             } else
             {
                 recursionCount++;
                 coll.transform.position = new Vector3(xPos, coll.transform.position.y,
                     coll.transform.position.z);
-                coll.GetComponent<Movement>().beginning = true;
+                coll.GetComponent<GameManager>().beginning = true;
             }
         }
         

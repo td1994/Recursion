@@ -28,10 +28,10 @@ public class NewCameraBarrier : MonoBehaviour {
             //if the camera collided with the floor
             if(Math.Abs(posX - lastX) >= 20f)
             {
-                if(cameraAt != player.GetComponent<Movement>().atSection)
+                if(cameraAt != player.GetComponent<GameManager>().atSection)
                 {
                     posY = player.transform.position.y + border.GetComponent<Renderer>().bounds.size.y / 2;
-                    cameraAt = player.GetComponent<Movement>().atSection;
+                    cameraAt = player.GetComponent<GameManager>().atSection;
                 }
             }
             else if (collided)
@@ -40,7 +40,7 @@ public class NewCameraBarrier : MonoBehaviour {
                     < border.transform.position.y + border.GetComponent<Renderer>().bounds.size.y / 2)
                 {
                     print("Camera is staying where it is, collided");
-                    posY = floor[player.GetComponent<Movement>().atSection - 1].transform.position.y + floor[player.GetComponent<Movement>().atSection - 1].GetComponent<Renderer>().bounds.size.y / 2 + halfCameraY;
+                    posY = floor[player.GetComponent<GameManager>().atSection - 1].transform.position.y + floor[player.GetComponent<GameManager>().atSection - 1].GetComponent<Renderer>().bounds.size.y / 2 + halfCameraY;
                 }
                 else
                 {

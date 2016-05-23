@@ -2,12 +2,17 @@
 using System.Collections;
 
 public class Collectibile : MonoBehaviour {
-    public GameObject manager; 
+    private GameManager manager; 
+
+    void Start()
+    {
+        manager = GameObject.Find("Character").GetComponent<GameManager>();
+    }
 
 	void OnTriggerEnter2D(Collider2D coll)
     {
         print("collides with collectible");
-        manager.GetComponent<GameManager>().collected = true;
+        manager.collected = true;
         Destroy(this.gameObject);
     }
 }

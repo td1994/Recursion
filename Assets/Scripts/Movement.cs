@@ -20,6 +20,7 @@ public class Movement : MonoBehaviour {
         status = GameObject.Find("Level Complete").GetComponent<TextMesh>();
         retry = GameObject.Find("Retry");
         mainMenu = GameObject.Find("Main Menu");
+        print(mainMenu != null);
         this.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, 0);
 	}
 	

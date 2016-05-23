@@ -9,15 +9,23 @@ public class GameManager : MonoBehaviour {
     private TextMesh recNotice;
     public GameObject[] repeatingTeleporters;
     public int[] minDepth;
-    private int depth = 1;
-    public bool collected = false;
     private GameObject retry;
     private GameObject mainMenu;
     private GameObject nextLevel;
-    public GameObject player;
+    private GameObject player;
+    private GameObject collectible;
+
+    public float speed;
+    public float jump;
+    private bool grounded = true;
+    private bool dead = false;
+    public int atSection = 1;
+    public bool beginning = true;
+    public bool collected = false;
 
     void Start()
     {
+        player = GameObject.Find("Character");
         background = GameObject.Find("Background");
         status = GameObject.Find("Level Complete").GetComponent<TextMesh>();
         stars_empty = new GameObject[3];
@@ -34,60 +42,92 @@ public class GameManager : MonoBehaviour {
         retry = GameObject.Find("Retry");
         mainMenu = GameObject.Find("Main Menu");
         nextLevel = GameObject.Find("Next Level");
+        collectible = GameObject.Find("Collectible");
 
         for (int i = 0; i < stars_empty.Length; i++)
         {
             stars_empty[i].GetComponent<SpriteRenderer>().enabled = false;
-            print(stars_empty[i].GetComponent<SpriteRenderer>().enabled);
+            //print(stars_empty[i].GetComponent<SpriteRenderer>().enabled);
             stars_full[i].GetComponent<SpriteRenderer>().enabled = false;
-            print(stars_full[i].GetComponent<SpriteRenderer>().enabled);
+            //print(stars_full[i].GetComponent<SpriteRenderer>().enabled);
         }
         retry.SetActive(false);
         mainMenu.SetActive(false);
         nextLevel.SetActive(false);
+
+        this.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, 0);
     }
 
     void Update()
     {
-        if(player != null) 
-            depth = player.GetComponent<Movement>().atSection;
-        recNotice.text = "Section " + depth + " Loops: " + repeatingTeleporters[depth - 1].GetComponent<Teleport>().recursionCount;
-        //Note: We need to come up with a way to set up adding teleporters in order to count for loops of other areas
+        recNotice.text = "Section " + atSection + " Loops: " + repeatingTeleporters[atSection - 1].GetComponent<Teleport>().recursionCount;
+        if (Input.GetAxis("Jump") > 0f && grounded)
+        {
+            this.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, jump);
+            grounded = false;
+        }
+
+        if (this.GetComponent<Rigidbody2D>().velocity.x == 0)
+        {
+            dead = true;
+            Destroy(this.gameObject);
+        }
     }
 
-	void OnTriggerEnter2D(Collider2D coll)
+    void OnCollisionEnter2D(Collision2D coll)
     {
-        Destroy(coll.gameObject);
-        background.GetComponent<SpriteRenderer>().enabled = true;
-        status.GetComponent<MeshRenderer>().enabled = true;
-        /*for (int i = 0; i < stars_empty.Length; i++)
+        if (coll.gameObject.tag == "floor")
         {
-            stars_empty[i].GetComponent<SpriteRenderer>().enabled = true;
-            stars_full[i].GetComponent<SpriteRenderer>().enabled = true;
-        }*/
-        stars_full[0].GetComponent<SpriteRenderer>().enabled = true;
-        for (int i = 0; i < repeatingTeleporters.Length; i++)
+            grounded = true;
+        } else if(coll.gameObject.tag == "door")
         {
-            if (repeatingTeleporters[i].GetComponent<Teleport>().recursionCount > minDepth[i])
-            {
-                stars_empty[1].GetComponent<SpriteRenderer>().enabled = true;
-            }
+            Destroy(this.gameObject);
         }
-        if(!stars_empty[1].GetComponent<SpriteRenderer>().enabled)
-        {
-            stars_full[1].GetComponent<SpriteRenderer>().enabled = true;
-        }
+    }
 
-        if(collected)
+    void OnDestroy()
+    {
+        if (dead)
         {
-            stars_full[2].GetComponent<SpriteRenderer>().enabled = true;
+            background.GetComponent<SpriteRenderer>().enabled = true;
+            status.text = "Level Failed!";
+            status.GetComponent<MeshRenderer>().enabled = true;
+            retry.SetActive(true);
+            mainMenu.SetActive(true);
         } else
         {
-            stars_empty[2].GetComponent<SpriteRenderer>().enabled = true;
+            background.GetComponent<SpriteRenderer>().enabled = true;
+            status.GetComponent<MeshRenderer>().enabled = true;
+            /*for (int i = 0; i < stars_empty.Length; i++)
+            {
+                stars_empty[i].GetComponent<SpriteRenderer>().enabled = true;
+                stars_full[i].GetComponent<SpriteRenderer>().enabled = true;
+            }*/
+            stars_full[0].GetComponent<SpriteRenderer>().enabled = true;
+            for (int i = 0; i < repeatingTeleporters.Length; i++)
+            {
+                if (repeatingTeleporters[i].GetComponent<Teleport>().recursionCount > minDepth[i])
+                {
+                    stars_empty[1].GetComponent<SpriteRenderer>().enabled = true;
+                }
+            }
+            if (!stars_empty[1].GetComponent<SpriteRenderer>().enabled)
+            {
+                stars_full[1].GetComponent<SpriteRenderer>().enabled = true;
+            }
+
+            if (collected)
+            {
+                stars_full[2].GetComponent<SpriteRenderer>().enabled = true;
+            }
+            else
+            {
+                stars_empty[2].GetComponent<SpriteRenderer>().enabled = true;
+            }
+            recNotice.GetComponent<MeshRenderer>().enabled = false;
+            retry.SetActive(true);
+            mainMenu.SetActive(true);
+            nextLevel.SetActive(true);
         }
-        recNotice.GetComponent<MeshRenderer>().enabled = false;
-        retry.SetActive(true);
-        mainMenu.SetActive(true);
-        nextLevel.SetActive(true);
     }
 }
