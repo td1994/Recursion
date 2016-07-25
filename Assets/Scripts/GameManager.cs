@@ -60,7 +60,10 @@ public class GameManager : MonoBehaviour {
 
     void Update()
     {
-        recNotice.text = "Section " + atSection + " Loops: " + repeatingTeleporters[atSection - 1].GetComponent<Teleport>().recursionCount;
+        if (repeatingTeleporters.GetLength(0) > 0)
+        {
+            recNotice.text = "Section " + atSection + " Loops: " + repeatingTeleporters[atSection - 1].GetComponent<Teleport>().recursionCount;
+        }
         if (Input.GetAxis("Jump") > 0f && grounded)
         {
             this.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, jump);
@@ -72,6 +75,7 @@ public class GameManager : MonoBehaviour {
             dead = true;
             Destroy(this.gameObject);
         }
+        
     }
 
     void OnCollisionEnter2D(Collision2D coll)
