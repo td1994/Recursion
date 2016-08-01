@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Levels/TestLevel2.unity
+- path: Assets/Levels/RainbowTest.unity
   isLoaded: 1
   isActive: 1
