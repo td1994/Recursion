@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Levels/TestLevel.unity
+- path: Assets/Levels/DanielsPlayThing.unity
   isLoaded: 1
   isActive: 1

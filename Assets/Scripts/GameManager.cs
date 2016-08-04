@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System;
 
 public class GameManager : MonoBehaviour {
     private GameObject background;
@@ -60,6 +60,9 @@ public class GameManager : MonoBehaviour {
 
     void Update()
     {
+        if(Math.Abs(this.GetComponent<Rigidbody2D>().velocity.y) > 0.1f) {
+            grounded = false;
+        }
         if (repeatingTeleporters.GetLength(0) > 0)
         {
             recNotice.text = "Section " + atSection + " Loops: " + repeatingTeleporters[atSection - 1].GetComponent<Teleport>().recursionCount;
@@ -70,7 +73,7 @@ public class GameManager : MonoBehaviour {
             grounded = false;
         }
 
-        if (this.GetComponent<Rigidbody2D>().velocity.x == 0)
+        if (this.GetComponent<Rigidbody2D>().velocity.x <= 0.5)
         {
             dead = true;
             Destroy(this.gameObject);
